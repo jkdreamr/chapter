@@ -266,6 +266,7 @@ document.getElementById('notInRoomBtn').addEventListener('click', function() {
     
     document.getElementById('inRoomBtn').classList.remove('active');
     document.getElementById('notInRoomBtn').classList.add('active');
+    document.getElementById('leaveTimeGroup').style.display = 'none';
     document.getElementById('reasonGroup').style.display = 'block';
 });
 
