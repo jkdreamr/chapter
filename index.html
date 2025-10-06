@@ -15,6 +15,7 @@
                 <div class="counter-number" id="counterNumber">0</div>
                 <div class="counter-label">People in Chapter Room</div>
             </div>
+            <div class="rolled-out-counter" id="rolledOutCounter">0 getting rolled out</div>
             <div class="needed-message" id="neededMessage"></div>
         </div>
 
@@ -30,6 +31,7 @@
                 <label>Are you in the chapter room?</label>
                 <div class="button-group">
                     <button class="status-btn" id="inRoomBtn">In Chapter Room</button>
+                    <button class="status-btn" id="rolledOutBtn">Getting Rolled Out</button>
                     <button class="status-btn" id="notInRoomBtn">Not in Chapter Room</button>
                 </div>
             </div>
@@ -38,6 +40,12 @@
                 <label for="leaveTimeInput">What time do you have to leave? (Optional)</label>
                 <input type="time" id="leaveTimeInput" placeholder="e.g., 3:00 PM">
                 <button class="submit-btn" id="submitInRoomBtn">Submit</button>
+            </div>
+
+            <div class="form-group" id="rolledOutGroup" style="display: none;">
+                <label for="rolledOutByInput">Who is rolling you out?</label>
+                <input type="text" id="rolledOutByInput" placeholder="Enter name(s)...">
+                <button class="submit-btn" id="submitRolledOutBtn">Submit</button>
             </div>
 
             <div class="form-group" id="reasonGroup" style="display: none;">
