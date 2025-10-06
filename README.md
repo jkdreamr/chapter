@@ -31,12 +31,30 @@ npm start
 
 ### Deployment
 
-You can deploy this to any Node.js hosting service like:
-- Heroku
+**IMPORTANT:** The app requires a backend server to sync data across devices. GitHub Pages alone won't work!
+
+#### Option 1: Deploy to Render.com (Recommended - Free & Easy)
+
+1. Go to [render.com](https://render.com) and sign up
+2. Click "New +" → "Web Service"
+3. Connect your GitHub repository (`jkdreamr/chapter`)
+4. Render will auto-detect the `render.yaml` file
+5. Click "Create Web Service"
+6. Once deployed, you'll get a URL like `https://chapter-room-tracker.onrender.com`
+7. Share this URL with everyone!
+
+#### Option 2: Deploy to Vercel
+
+1. Install Vercel CLI: `npm install -g vercel`
+2. Run: `vercel` in the project directory
+3. Follow the prompts
+4. Your app will be deployed!
+
+#### Option 3: Other Services
 - Railway
-- Render
-- Vercel
+- Heroku
 - DigitalOcean
+- Fly.io
 
 Make sure to set the `PORT` environment variable if required by your hosting provider.
 
