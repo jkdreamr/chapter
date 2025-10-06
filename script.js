@@ -101,9 +101,10 @@ function formatTime(time24) {
 function updateCounter() {
     const inRoomCount = Object.values(userStatuses).filter(status => status.inRoom).length;
     const rolledOutCount = Object.values(userStatuses).filter(status => status.rolledOut).length;
-    const totalCount = inRoomCount + rolledOutCount; // Rolled out counts as in room
+    const totalCount = inRoomCount + rolledOutCount; // Total for minimum requirement
     
-    document.getElementById('counterNumber').textContent = totalCount;
+    // Show only in-room count in the main counter
+    document.getElementById('counterNumber').textContent = inRoomCount;
     
     // Update rolled out counter
     const rolledOutCounter = document.getElementById('rolledOutCounter');
@@ -111,6 +112,7 @@ function updateCounter() {
     
     const minimumNeeded = getMinimumNeeded();
     const neededMessage = document.getElementById('neededMessage');
+    // Use total count (in room + rolled out) for minimum calculation
     if (totalCount < minimumNeeded) {
         const needed = minimumNeeded - totalCount;
         neededMessage.textContent = `Need ${needed} more ${needed === 1 ? 'person' : 'people'}`;
