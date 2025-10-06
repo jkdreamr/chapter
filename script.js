@@ -152,11 +152,19 @@ function updateStatusList() {
             item.appendChild(leaveTime);
         }
         
-        if (!status.inRoom && status.reason) {
-            const reason = document.createElement('div');
-            reason.className = 'status-reason';
-            reason.textContent = `Reason: ${status.reason}`;
-            item.appendChild(reason);
+        if (!status.inRoom) {
+            if (status.arrivalTime) {
+                const arrivalTime = document.createElement('div');
+                arrivalTime.className = 'status-reason';
+                arrivalTime.textContent = `Can come at: ${formatTime(status.arrivalTime)}`;
+                item.appendChild(arrivalTime);
+            }
+            if (status.reason) {
+                const reason = document.createElement('div');
+                reason.className = 'status-reason';
+                reason.textContent = `Reason: ${status.reason}`;
+                item.appendChild(reason);
+            }
         }
         
         statusList.appendChild(item);
@@ -180,6 +188,7 @@ document.getElementById('nameSelect').addEventListener('change', function() {
         document.getElementById('notInRoomBtn').classList.remove('active');
         document.getElementById('reasonInput').value = '';
         document.getElementById('leaveTimeInput').value = '';
+        document.getElementById('arrivalTimeInput').value = '';
         
         // If user already has a status, show it
         if (userStatuses[selectedName]) {
@@ -192,6 +201,9 @@ document.getElementById('nameSelect').addEventListener('change', function() {
             } else {
                 document.getElementById('notInRoomBtn').classList.add('active');
                 reasonGroup.style.display = 'block';
+                if (userStatuses[selectedName].arrivalTime) {
+                    document.getElementById('arrivalTimeInput').value = userStatuses[selectedName].arrivalTime;
+                }
                 if (userStatuses[selectedName].reason) {
                     document.getElementById('reasonInput').value = userStatuses[selectedName].reason;
                 }
@@ -225,6 +237,7 @@ document.getElementById('submitInRoomBtn').addEventListener('click', async funct
     const status = {
         inRoom: true,
         leaveTime: leaveTime || null,
+        arrivalTime: null,
         reason: null
     };
     
@@ -259,13 +272,16 @@ document.getElementById('notInRoomBtn').addEventListener('click', function() {
 // Handle reason submission
 document.getElementById('submitReasonBtn').addEventListener('click', async function() {
     const selectedName = document.getElementById('nameSelect').value;
+    const arrivalTime = document.getElementById('arrivalTimeInput').value;
     const reason = document.getElementById('reasonInput').value.trim();
     
     if (!selectedName) return;
     
     const status = {
         inRoom: false,
-        reason: reason || null
+        arrivalTime: arrivalTime || null,
+        reason: reason || null,
+        leaveTime: null
     };
     
     userStatuses[selectedName] = status;
