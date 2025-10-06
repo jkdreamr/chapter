@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter Room Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Chapter Room Tracker</h1>
+        
+        <div class="counter-section">
+            <div class="counter">
+                <div class="counter-number" id="counterNumber">0</div>
+                <div class="counter-label">People in Chapter Room</div>
+            </div>
+            <div class="needed-message" id="neededMessage"></div>
+        </div>
+
+        <div class="selection-section">
+            <div class="form-group">
+                <label for="nameSelect">Select Your Name:</label>
+                <select id="nameSelect">
+                    <option value="">-- Choose your name --</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="statusGroup" style="display: none;">
+                <label>Are you in the chapter room?</label>
+                <div class="button-group">
+                    <button class="status-btn" id="inRoomBtn">In Chapter Room</button>
+                    <button class="status-btn" id="notInRoomBtn">Not in Chapter Room</button>
+                </div>
+            </div>
+
+            <div class="form-group" id="reasonGroup" style="display: none;">
+                <label for="reasonInput">Why can't you be there?</label>
+                <textarea id="reasonInput" rows="3" placeholder="Enter your reason..."></textarea>
+                <button class="submit-btn" id="submitReasonBtn">Submit</button>
+            </div>
+        </div>
+
+        <div class="status-list">
+            <h2>Current Status</h2>
+            <div id="statusList"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
