@@ -87,6 +87,16 @@ function initializeNameDropdown() {
     });
 }
 
+// Format time from 24-hour to 12-hour format
+function formatTime(time24) {
+    if (!time24) return '';
+    const [hours, minutes] = time24.split(':');
+    const hour = parseInt(hours);
+    const ampm = hour >= 12 ? 'PM' : 'AM';
+    const hour12 = hour % 12 || 12;
+    return `${hour12}:${minutes} ${ampm}`;
+}
+
 // Update the counter
 function updateCounter() {
     const count = Object.values(userStatuses).filter(status => status.inRoom).length;
@@ -135,6 +145,13 @@ function updateStatusList() {
         item.appendChild(nameSpan);
         item.appendChild(badge);
         
+        if (status.inRoom && status.leaveTime) {
+            const leaveTime = document.createElement('div');
+            leaveTime.className = 'status-reason';
+            leaveTime.textContent = `Leaving at: ${formatTime(status.leaveTime)}`;
+            item.appendChild(leaveTime);
+        }
+        
         if (!status.inRoom && status.reason) {
             const reason = document.createElement('div');
             reason.className = 'status-reason';
@@ -150,21 +167,28 @@ function updateStatusList() {
 document.getElementById('nameSelect').addEventListener('change', function() {
     const selectedName = this.value;
     const statusGroup = document.getElementById('statusGroup');
+    const leaveTimeGroup = document.getElementById('leaveTimeGroup');
     const reasonGroup = document.getElementById('reasonGroup');
     
     if (selectedName) {
         statusGroup.style.display = 'block';
+        leaveTimeGroup.style.display = 'none';
         reasonGroup.style.display = 'none';
         
-        // Reset buttons
+        // Reset buttons and inputs
         document.getElementById('inRoomBtn').classList.remove('active');
         document.getElementById('notInRoomBtn').classList.remove('active');
         document.getElementById('reasonInput').value = '';
+        document.getElementById('leaveTimeInput').value = '';
         
         // If user already has a status, show it
         if (userStatuses[selectedName]) {
             if (userStatuses[selectedName].inRoom) {
                 document.getElementById('inRoomBtn').classList.add('active');
+                leaveTimeGroup.style.display = 'block';
+                if (userStatuses[selectedName].leaveTime) {
+                    document.getElementById('leaveTimeInput').value = userStatuses[selectedName].leaveTime;
+                }
             } else {
                 document.getElementById('notInRoomBtn').classList.add('active');
                 reasonGroup.style.display = 'block';
@@ -175,25 +199,36 @@ document.getElementById('nameSelect').addEventListener('change', function() {
         }
     } else {
         statusGroup.style.display = 'none';
+        leaveTimeGroup.style.display = 'none';
         reasonGroup.style.display = 'none';
     }
 });
 
 // Handle "In Room" button
-document.getElementById('inRoomBtn').addEventListener('click', async function() {
+document.getElementById('inRoomBtn').addEventListener('click', function() {
     const selectedName = document.getElementById('nameSelect').value;
+    if (!selectedName) return;
+    
+    document.getElementById('inRoomBtn').classList.add('active');
+    document.getElementById('notInRoomBtn').classList.remove('active');
+    document.getElementById('leaveTimeGroup').style.display = 'block';
+    document.getElementById('reasonGroup').style.display = 'none';
+});
+
+// Handle "In Room" submission with leave time
+document.getElementById('submitInRoomBtn').addEventListener('click', async function() {
+    const selectedName = document.getElementById('nameSelect').value;
+    const leaveTime = document.getElementById('leaveTimeInput').value;
+    
     if (!selectedName) return;
     
     const status = {
         inRoom: true,
+        leaveTime: leaveTime || null,
         reason: null
     };
     
     userStatuses[selectedName] = status;
-    
-    document.getElementById('inRoomBtn').classList.add('active');
-    document.getElementById('notInRoomBtn').classList.remove('active');
-    document.getElementById('reasonGroup').style.display = 'none';
     
     // Save to server
     try {
