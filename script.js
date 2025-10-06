@@ -48,16 +48,31 @@ function getMinimumNeeded() {
 // Store user statuses
 let userStatuses = {};
 
-// Load saved data from localStorage
-function loadData() {
-    const saved = localStorage.getItem('chapterRoomData');
-    if (saved) {
-        userStatuses = JSON.parse(saved);
+// API base URL - change this when deploying
+const API_URL = window.location.origin;
+
+// Load saved data from server
+async function loadData() {
+    try {
+        const response = await fetch(`${API_URL}/api/statuses`);
+        if (response.ok) {
+            userStatuses = await response.json();
+            updateCounter();
+            updateStatusList();
+        }
+    } catch (error) {
+        console.error('Error loading data:', error);
+        // Fallback to localStorage if server is unavailable
+        const saved = localStorage.getItem('chapterRoomData');
+        if (saved) {
+            userStatuses = JSON.parse(saved);
+        }
     }
 }
 
-// Save data to localStorage
-function saveData() {
+// Save data to server
+async function saveData() {
+    // Also save to localStorage as backup
     localStorage.setItem('chapterRoomData', JSON.stringify(userStatuses));
 }
 
@@ -165,18 +180,31 @@ document.getElementById('nameSelect').addEventListener('change', function() {
 });
 
 // Handle "In Room" button
-document.getElementById('inRoomBtn').addEventListener('click', function() {
+document.getElementById('inRoomBtn').addEventListener('click', async function() {
     const selectedName = document.getElementById('nameSelect').value;
     if (!selectedName) return;
     
-    userStatuses[selectedName] = {
+    const status = {
         inRoom: true,
         reason: null
     };
     
+    userStatuses[selectedName] = status;
+    
     document.getElementById('inRoomBtn').classList.add('active');
     document.getElementById('notInRoomBtn').classList.remove('active');
     document.getElementById('reasonGroup').style.display = 'none';
+    
+    // Save to server
+    try {
+        await fetch(`${API_URL}/api/status`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: selectedName, status })
+        });
+    } catch (error) {
+        console.error('Error saving to server:', error);
+    }
     
     saveData();
     updateCounter();
@@ -194,21 +222,39 @@ document.getElementById('notInRoomBtn').addEventListener('click', function() {
 });
 
 // Handle reason submission
-document.getElementById('submitReasonBtn').addEventListener('click', function() {
+document.getElementById('submitReasonBtn').addEventListener('click', async function() {
     const selectedName = document.getElementById('nameSelect').value;
     const reason = document.getElementById('reasonInput').value.trim();
     
     if (!selectedName) return;
     
-    userStatuses[selectedName] = {
+    const status = {
         inRoom: false,
         reason: reason || null
     };
+    
+    userStatuses[selectedName] = status;
+    
+    // Save to server
+    try {
+        await fetch(`${API_URL}/api/status`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: selectedName, status })
+        });
+    } catch (error) {
+        console.error('Error saving to server:', error);
+    }
     
     saveData();
     updateCounter();
     updateStatusList();
 });
+
+// Auto-refresh data every 5 seconds to sync across devices
+setInterval(async () => {
+    await loadData();
+}, 5000);
 
 // Initialize the app
 loadData();
